@@ -2,8 +2,8 @@
   <div id="app">
     <Header :text-header="textHeader"/>
     <ButtonAddNewCost @emitShowForm="showFormAdd = !showFormAdd"/>
-    <AddPaymentForm v-show="showFormAdd" @emitName="methodName"/>
-    <PaymentsDisplay :items="paymentsList"/>
+    <AddPaymentForm v-show="showFormAdd"/>
+    <PaymentsDisplay/>
   </div>
 </template>
 
@@ -25,40 +25,10 @@ export default {
     return {
       textHeader: 'My personal const',
       showFormAdd: false,
-      paymentsList: []
     }
   },
-  methods: {
-    fetchData () {
-      return [
-        {
-          id: 1,
-          date: '28.03.2020',
-          category: 'Food',
-          amount: 169
-        },
-        {
-          id: 2,
-          date: '24.03.2020',
-          category: 'Transport',
-          amount: 360
-        },
-        {
-          id: 3,
-          date: '24.03.2020',
-          category: 'Food',
-          amount: 532
-        }
-      ]
-    },
-    methodName (data) {
-      data.id = this.paymentsList.length + 1
-      this.paymentsList = [...this.paymentsList, data]
-    }
-  },
-  created () {
-    this.paymentsList = this.fetchData()
-  }
+  methods: {},
+
 }
 </script>
 

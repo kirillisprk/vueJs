@@ -48,10 +48,11 @@ export default {
     ...mapActions(['fetchDataPage']),
     ...mapMutations(['setCurrentPage']),
 
-    getDataPage (n) {
-      let p = `Page${n}`;
+    getDataPage () {
+      let p = `Page${this.$route.params.page}`;
       this.setCurrentPage(p);
       this.currentPage = p;
+
       let cashPage = Object.keys(this.getPagePaymentsList);
       if (!cashPage.includes(this.currentPage)) {
         this.fetchDataPage(p)
@@ -63,6 +64,9 @@ export default {
   mounted () {
     this.getDataPage(1)
   },
+  created () {
+    this.currentPage = `Page${this.$route.params.page}`;
+  }
 
 }
 </script>

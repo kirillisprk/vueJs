@@ -18,7 +18,6 @@ export default {
         this.$router.push({path: `/dashboard/${n}`})
         this.$emit('changePage')
       }
-      // console.log(this.$route.params.page)
     }
   }
 }

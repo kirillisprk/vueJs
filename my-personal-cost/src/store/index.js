@@ -52,6 +52,19 @@ export default new Vuex.Store({
     },
     setCurrentPage (state, payload) {
       state.currentPage = payload
+    },
+    deleteCurrentElement (state, payload) {
+      let localData = state.pagePaymentsList[state.currentPage]
+      let indexElement = localData.findIndex(entry => entry.id === payload);
+      state.pagePaymentsList[state.currentPage] = localData.filter((element, index) => index !== indexElement)
+    },
+    editCurrentElement (state, payload) {
+      let localData = state.pagePaymentsList[state.currentPage]
+      let indexElement = localData.findIndex(entry => entry.id === payload.id);
+      localData[indexElement].id = payload.id;
+      localData[indexElement].amount = payload.amount;
+      localData[indexElement].category = payload.category;
+      localData[indexElement].date = payload.date;
     }
   },
   actions: {

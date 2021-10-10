@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="display">
-      <input ref="operand1" v-model.number="operand1" @focus="selectOperand = 1"/>
-      <input ref="operand2" v-model.number="operand2" @focus="selectOperand = 2"/>
+      <input ref="operand1" name="operand1" v-model.number="operand1" @focus="selectOperand = 1"/>
+      <input ref="operand2" name="operand2" v-model.number="operand2" @focus="selectOperand = 2"/>
       = {{ result }}
       <div v-if="error">Ошибка! {{ error }}</div>
     </div>
@@ -23,20 +23,22 @@
       <br/>
       <div class="keyboardButtons" v-if="showKeyboard">
         <label>
-          <input type="radio" v-model="selectOperand" v-bind:value=1 @click="$refs.operand1.focus()">
+          <input name="selectOperand1" type="radio" v-model="selectOperand" v-bind:value=1
+                 @click="$refs.operand1.focus()">
           Операнд 1
         </label>
         <label>
-          <input type="radio" v-model="selectOperand" v-bind:value=2 @click="$refs.operand2.focus()">
+          <input name="selectOperand2" type="radio" v-model="selectOperand" v-bind:value=2
+                 @click="$refs.operand2.focus()">
           Операнд 2
         </label>
         <br/>
         <button
-            v-for="button in buttons"
-            v-bind:key="button"
-            v-bind:title="button"
-            @click.stop="setOperand(button)"
-            :disabled="selectOperand === ''">
+          v-for="button in buttons"
+          v-bind:key="button"
+          v-bind:title="button"
+          @click.stop="setOperand(button)"
+          :disabled="selectOperand === ''">
           <span v-if="button==='del'"> &#8592;</span>
           <span v-else> {{ button }}</span>
         </button>
@@ -51,7 +53,7 @@
 <script>
 export default {
   name: "Calculator",
-  data() {
+  data () {
     return {
       operand1: '',
       operand2: '',
@@ -65,11 +67,11 @@ export default {
     }
   },
   methods: {
-    calculator(operation) {
+    calculator (operation) {
       this.error = ''
-      const key = Date.now()
-      const value = `${this.operand1}${operation}${this.operand2}=${this.result}`
-      this.$set(this.logs, key, value)
+      this.result = 0;
+      this.operand1 = +this.operand1;
+      this.operand2 = +this.operand2;
       switch (operation) {
         case '+':
           this.add();
@@ -90,32 +92,35 @@ export default {
           this.integerDiv()
           break;
       }
+      const key = Date.now()
+      const value = `${this.operand1}${operation}${this.operand2}=${this.result}`
+      this.$set(this.logs, key, value)
     },
-    add() {
+    add () {
       const {operand1, operand2} = this;
       this.result = operand1 + operand2;
     },
-    sub() {
+    sub () {
       const {operand1, operand2} = this;
       this.result = operand1 - operand2
     },
-    multi() {
+    multi () {
       const {operand1, operand2} = this;
       this.result = operand1 * operand2;
     },
-    div() {
+    div () {
       const {operand1, operand2} = this;
       operand2 === 0 ? this.error = 'Делить на 0 нельзя!' : this.result = operand1 / operand2;
     },
-    pow() {
+    pow () {
       const {operand1, operand2} = this;
       this.result = Math.pow(operand1, operand2);
     },
-    integerDiv() {
+    integerDiv () {
       const {operand1, operand2} = this;
       operand2 === 0 ? this.error = 'Делить на 0 нельзя!' : this.result = (operand1 - operand1 % operand2) / operand2;
     },
-    setOperand(value) {
+    setOperand (value) {
       switch (this.selectOperand) {
         case 1:
           if (value === 'del') {
@@ -135,12 +140,11 @@ export default {
           break;
       }
     },
-    deleteLastSymbol(value) {
+    deleteLastSymbol (value) {
       value = value.toString();
       return value.slice(0, -1);
     }
   },
-
 
 }
 

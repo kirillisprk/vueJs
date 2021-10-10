@@ -7,6 +7,7 @@
     <AddPaymentForm v-if="editIsShow" :state="this.state" :editElement="editElement"/>
     <header>
       <router-link to="/dashboard/1">Dashboard</router-link>
+      <router-link to="/Calculator">Calculator</router-link>
       <router-link to="/about">About</router-link>
     </header>
     <router-view/>

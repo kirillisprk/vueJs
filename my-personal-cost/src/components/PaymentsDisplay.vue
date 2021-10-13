@@ -1,40 +1,56 @@
 <template>
   <div>
-    <table class="blueTable">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Amount</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tfoot>
-      </tfoot>
-      <tbody>
-      <tr v-for="item in getPagePaymentsList[currentPage]" v-bind:key="item.id">
-        <td>{{ item.id }}</td>
-        <td>{{ item.date }}</td>
-        <td>{{ item.category }}</td>
-        <td>{{ item.amount }}</td>
-        <td>
-          <ContextMenuComponent
-            :itemParam="{id: item.id, date: item.date, category: item.category, amount: item.amount}"/>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <span>Total Prise: {{ this.getFullPaymentAmount }}</span>
-    <br/>
-    <pagination :count-pages="this.getCountPages" @changePage="getDataPage"/>
+    <template>
+      <span>Total Prise: {{ this.getFullPaymentAmount }}</span>
+      <v-simple-table
+        fixed-header>
+        <template v-slot:default>
+          <thead>
+          <tr>
+            <th class="text-left">
+              #
+            </th>
+            <th class="text-left">
+              Date
+            </th>
+            <th class="text-left">
+              Category
+            </th>
+            <th class="text-left">
+              Value
+            </th>
+            <th class="text-left">
+
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="item in getPagePaymentsList[currentPage]" :key="item.id">
+            <td>{{ item.id }}</td>
+            <td>{{ item.date }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.amount }}</td>
+            <td>
+              <ContextMenuComponent
+                :item-param="{id: item.id, date: item.date, category: item.category, amount: item.amount}"/>
+            </td>
+          </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </template>
+    <pagination
+      :count-pages="this.getCountPages"
+      @changePage="getDataPage"
+    />
+
   </div>
 </template>
 
 <script>
 import {mapActions, mapGetters, mapMutations} from 'vuex'
-import Pagination from "@/components/Pagination";
-import ContextMenuComponent from "@/components/ContextMenuComponent";
+import Pagination from '@/components/Pagination'
+import ContextMenuComponent from '@/components/ContextMenuComponent'
 
 export default {
   name: 'PaymentsDisplay',
@@ -48,7 +64,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getFullPaymentAmount', 'getPagePaymentsList', 'getCountPages']),
+    ...mapGetters(['getFullPaymentAmount', 'getPagePaymentsList', 'getCountPages'])
 
   },
   methods: {
@@ -56,11 +72,11 @@ export default {
     ...mapMutations(['setCurrentPage', 'deleteCurrentElement']),
 
     getDataPage () {
-      let p = `Page${this.$route.params.page}`;
-      this.setCurrentPage(p);
-      this.currentPage = p;
+      const p = `Page${this.$route.params.page}`
+      this.setCurrentPage(p)
+      this.currentPage = p
 
-      let cashPage = Object.keys(this.getPagePaymentsList);
+      const cashPage = Object.keys(this.getPagePaymentsList)
       if (!cashPage.includes(this.currentPage)) {
         this.fetchDataPage(p)
         this.cashPage = this.getPagePaymentsList
@@ -75,7 +91,7 @@ export default {
     this.getDataPage(1)
   },
   created () {
-    this.currentPage = `Page${this.$route.params.page}`;
+    this.currentPage = `Page${this.$route.params.page}`
     this.$contextMenu.EventBus.$on('deleteMenu', this.deleteCurrent)
   }
 
@@ -83,28 +99,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-.blueTable {
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-  font-size: 13px;
-
-  td, th {
-    border-bottom: 1px solid #AAAAAA;
-    padding: 10px;
-  }
-
-  thead {
-    th {
-      font-size: 15px;
-
-      &:first-child {
-        border-left: none;
-      }
-    }
-  }
-
-}
 
 </style>

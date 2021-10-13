@@ -1,6 +1,6 @@
 <template>
-  <div class="hello">
-    <h1>{{ textHeader }}</h1>
+  <div class="text-h5 text-sm-h3 my-8">
+    {{ textHeader }}
   </div>
 </template>
 

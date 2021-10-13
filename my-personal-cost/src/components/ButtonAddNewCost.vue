@@ -1,6 +1,10 @@
 <template>
-  <div class="addPaymentForm">
-    <button class="buttonShowForm" @click="showForm">ADD NEW COST+</button>
+  <div>
+    <button
+      @click="showForm">
+      ADD NEW COST
+      <v-icon>mdi-plus</v-icon>
+    </button>
   </div>
 </template>
 
@@ -16,13 +20,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-.addPaymentForm {
-  display: grid;
-  grid-gap: 10px;
-}
-
-.buttonShowForm {
-  width: 50%;
-}
 </style>

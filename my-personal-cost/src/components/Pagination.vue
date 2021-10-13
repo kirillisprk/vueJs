@@ -1,14 +1,19 @@
 <template>
   <div>
-    <button v-for="page in this.countPages" v-bind:key="page"
-            @click="clickPage(page)">{{ page }}
-    </button>
+    <v-col>
+      <v-btn color="teal mx-4" dark
+             v-for="page in this.countPages"
+             :key="page"
+             @click="clickPage(page)">
+        {{ page }}
+      </v-btn>
+    </v-col>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Pagination",
+  name: 'Pagination',
   props: {
     countPages: Number
   },

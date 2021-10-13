@@ -1,27 +1,99 @@
 <template>
   <div>
-    <h3 v-if="state==='edit'">Форма редактирования</h3>
-    <form class="add-form" id="add-item" @submit="checkForm">
-      <select v-model="selectedCategory" :class="{ error: isErrorCategory}">
-        <option disabled value="">Выберите категорию</option>
-        <option v-for="option in options" :value="option" :key="option">
-          {{ option }}
-        </option>
-      </select>
-      <input :class="{ error: isErrorAmount}" placeholder="Payment amount" v-model.number="amount" type="number"
-             min="0"/>
-      <input ref="date" placeholder="Payment Date" v-model="date" type="date"/>
-      <div class="footer">
-        <button v-if="state==='edit'" @click="close()">Close</button>
-        <button class="buttonSave" type="submit">{{ state }}</button>
-      </div>
-
-    </form>
+    <template>
+      <v-dialog v-model="dialog" persistent width="500">
+        <v-card>
+          <v-container>
+            <v-card-title>
+              <span v-if="state==='edit'" class="text-h5">Форма редактирования</span>
+              <span v-else class="text-h5">Форма добавления</span>
+            </v-card-title>
+            <v-col>
+              <!--календарь-->
+              <v-row>
+                <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  :return-value.sync="date"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="date"
+                      ref="date"
+                      label="Payment Date"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="date"
+                    no-title
+                    scrollable
+                    color="teal"
+                    :first-day-of-week="1"
+                    locale-first-day-of-year="4"
+                    locale="ru"
+                  >
+                    <v-spacer></v-spacer>
+                    <v-btn text color="teal" @click="menu = false">
+                      Cancel
+                    </v-btn>
+                    <v-btn text color="teal" @click="$refs.menu.save(date)">
+                      OK
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-row>
+              <!--категория-->
+              <v-row>
+                <v-autocomplete hint="Выберите категорию"
+                                required
+                                v-model="selectedCategory"
+                                label="Category*"
+                                :items="options"
+                ></v-autocomplete>
+              </v-row>
+              <!--стоимость-->
+              <v-row>
+                <v-text-field required
+                              v-model.number="amount"
+                              type="number"
+                              min="0"
+                              label="Payment amount*"
+                              hint="Ведите стоимость"
+                >
+                </v-text-field>
+              </v-row>
+            </v-col>
+          </v-container>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1"
+                   text
+                   @click="closeWindow">
+              Close
+            </v-btn>
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="checkForm">
+              {{ state }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
   </div>
 </template>
 
 <script>
 import {mapActions, mapMutations, mapGetters} from 'vuex'
+
 export default {
   name: 'AddPaymentForm',
   props: {
@@ -29,25 +101,30 @@ export default {
       type: String,
       default: 'Add +'
     },
-    editElement: Object
+    editElement: Object,
+    dialog: Boolean,
   },
   data () {
     return {
+      picker: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      menu: false,
+      modal: false,
+      valid: false,
       category: '',
       amount: '',
       date: '',
       editId: '',
       isErrorAmount: false,
       isErrorCategory: false,
-      options: '',
-      selectedCategory: '',
+      options: [],
+      selectedCategory: ''
     }
   },
   computed: {
     ...mapGetters([
       'getCategoriesList',
       'getCurrentPage'
-    ]),
+    ])
 
   },
   methods: {
@@ -65,22 +142,23 @@ export default {
       this.options = this.getCategoriesList
     },
     formattedDate (date) {
-      let d = this.formatDayAndMouth((date.getDate()).toString());
-      let m = this.formatDayAndMouth((date.getMonth() + 1).toString());
-      const y = date.getFullYear();
+      const d = this.formatDayAndMouth((date.getDate()).toString())
+      const m = this.formatDayAndMouth((date.getMonth() + 1).toString())
+      const y = date.getFullYear()
       return `${d}.${m}.${y}`
     },
     formatDayAndMouth (number) {
       if (number.length < 2) {
-        return '0' + number;
+        return '0' + number
       }
       return number
     },
     createDate (date) {
       if (!Date.parse(date)) {
         return this.formattedDate(new Date())
-      } else
+      } else {
         return this.formattedDate(new Date(date))
+      }
     },
     onSaveClick () {
       const data = {
@@ -91,10 +169,9 @@ export default {
       this.addDataToPaymentsList(data)
       this.$router.push({name: 'dashboard', params: {page: this.getCurrentPage.slice(-1)}}).catch(err => {
         if (err.name !== 'NavigationDuplicated') {
-          throw err;
+          throw err
         }
-      });
-
+      })
     },
     onEditClick () {
       const data = {
@@ -106,8 +183,8 @@ export default {
       this.editCurrentElement(data)
     },
     checkForm (e) {
-      this.isErrorAmount = false;
-      this.isErrorCategory = false;
+      this.isErrorAmount = false
+      this.isErrorCategory = false
       if (this.amount && this.selectedCategory) {
         (this.state === 'edit') ? this.onEditClick() : this.onSaveClick()
       }
@@ -117,19 +194,22 @@ export default {
       if (!this.selectedCategory) {
         this.isErrorCategory = true
       }
-      e.preventDefault();
+      this.closeWindow()
+      e.preventDefault()
     },
     getCategories () {
       this.fetchCategory()
     },
     setForm (element) {
-      this.selectedCategory = element.category;
-      this.amount = element.amount;
+      this.selectedCategory = element.category
+      this.amount = element.amount
       this.editId = element.id
       const [dd, mm, yyyy] = element.date.split('.')
-      this.date = new Date(+yyyy, +mm, +dd).toISOString().slice(0, 10);
-
+      this.date = new Date(+yyyy, +mm, +dd).toISOString().slice(0, 10)
     },
+    closeWindow () {
+      this.$emit('hideAdd');
+    }
 
   },
   watch: {
@@ -150,31 +230,12 @@ export default {
       this.setForm(this.editElement)
       this.$contextMenu.EventBus.$on('editElement', this.setForm)
     }
-  },
+  }
 
 }
 
 </script>
 
 <style lang="scss" scoped>
-.add-form {
-  display: grid;
-  max-width: 50%;
-  grid-gap: 10px;
-}
 
-.footer {
-  display: flex;
-  gap: 16px;
-  justify-content: flex-end;
-}
-
-.error {
-  border: 1px solid red;
-}
-
-.buttonSave {
-  min-width: 50%;
-  justify-self: end;
-}
 </style>

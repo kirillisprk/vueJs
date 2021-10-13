@@ -81,10 +81,12 @@ describe('test calculator display keyboard', () => {
   const operand2 = wrapper.find("input[name=operand2]");
   test('operand 1 enter 0 - 9 ', async () => {
     const selectOperand = wrapper.find("input[name=selectOperand1]");
-    selectOperand.setChecked();
-    const testValue = Math.floor(Math.random() * 10).toString();
-    wrapper.vm.setOperand(testValue)
-    expect(wrapper.vm.$data.operand1).toBe(testValue)
+    const operationButton = wrapper.find('button[title="0"]');
+    wrapper.vm.$data.showKeyboard = 'true';
+    await selectOperand.setChecked();
+    operationButton.trigger('click');
+
+    expect(wrapper.vm.$data.operand1).toBe('0')
   });
   test('operand 2 enter 0 - 9 ', async () => {
     const selectOperand = wrapper.find("input[name=selectOperand2]");

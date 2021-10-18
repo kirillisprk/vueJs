@@ -12,21 +12,22 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-btn color="teal mb-8" dark @click="dialog = true">
+            <v-btn color="teal mb-8" dark @click="state='Add'; dialog = true">
               ADD NEW COST
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-            <AddPaymentForm @hideAdd="closeWindow" :dialog="dialog"/>
+            <AddPaymentForm @hideAdd="closeWindow" :dialog="dialog" :state="this.state" :editElement="editElement"/>
             <router-view/>
             <FastAddList @showAdd="showWindow"/>
-            <AddPaymentForm v-if="editIsShow" :state="this.state" :editElement="editElement"/>
           </v-col>
           <v-col>
-            тут график
+            {{ this.getStatistics }}
+            <chart-pie :chartdata="chartData"/>
           </v-col>
         </v-row>
       </v-container>
     </v-main>
+
   </v-app>
 </template>
 
@@ -36,6 +37,8 @@ import Header from "@/components/Header";
 import ButtonAddNewCost from "@/components/ButtonAddNewCost";
 import FastAddList from "@/components/FastAddList";
 import AddPaymentForm from "@/components/AddPaymentForm";
+import {mapGetters} from "vuex";
+import ChartPie from "@/components/ChartPie";
 
 export default {
   name: 'App',
@@ -44,8 +47,10 @@ export default {
     ButtonAddNewCost,
     FastAddList,
     AddPaymentForm,
+    ChartPie
   },
   data: () => ({
+    loaded: false,
     dialog: false,
     textHeader: 'My personal const',
     showFormAdd: false,
@@ -53,11 +58,18 @@ export default {
     modalSettings: {},
     editIsShow: false,
     editElement: {},
-    state: ''
+    state: '',
+    //chartLabels: Object.keys(this.getStatistics),
+    //chartData: Object.values(this.getStatistics),
+    chartOptions: null,
+    chartData: {
+      labels: ['Food'],
+      data: [333]
+    }
   }),
   methods: {
     edit (element) {
-      this.editIsShow = true;
+      this.dialog = true;
       this.state = 'edit'
       this.editElement = element
     },
@@ -69,6 +81,20 @@ export default {
     },
     showWindow () {
       this.dialog = true
+      this.state = 'Add'
+    },
+    showGraphic () {
+      this.renderChart(this.dataSet)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getCategoriesList',
+      'getStatistics'
+    ]),
+    getLabels () {
+      console.log('345', this.getStatistics)
+      return ['Food']
     }
   },
   watch: {
@@ -82,7 +108,6 @@ export default {
     }
   },
   mounted () {
-
     this.$contextMenu.EventBus.$on('editElement', this.edit)
     this.$contextMenu.EventBus.$on('closeEdit', this.closeEdit)
   }

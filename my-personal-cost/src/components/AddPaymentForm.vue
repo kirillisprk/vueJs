@@ -208,6 +208,10 @@ export default {
       this.date = new Date(+yyyy, +mm, +dd).toISOString().slice(0, 10)
     },
     closeWindow () {
+      this.selectedCategory = ''
+      this.amount = ''
+      this.editId = ''
+      this.date = ''
       this.$emit('hideAdd');
     }
 
@@ -228,8 +232,8 @@ export default {
     this.getOptionsCategories()
     if (this.state === 'edit') {
       this.setForm(this.editElement)
-      this.$contextMenu.EventBus.$on('editElement', this.setForm)
     }
+    this.$contextMenu.EventBus.$on('editElement', this.setForm)
   }
 
 }

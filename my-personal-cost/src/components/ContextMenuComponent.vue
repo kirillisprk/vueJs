@@ -1,26 +1,55 @@
 <template>
-  <div class="menu">
-    <button
-      v-click-outside="hide"
-      class="btn"
-      @click="toggle"
-    >
-      ...
-    </button>
-    <transition name="fade">
-      <div
-        v-show="opened"
-        class="content"
-      >
-        <button @click="editElement(itemParam)">
-          Редактировать
-        </button>
-        <button @click="deleteMenu(itemParam.id)">
-          Удалить
-        </button>
+  <div>
+    <template>
+      <div class="text-center">
+        <v-menu
+          offset-y
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              text
+              color="teal"
+              v-bind="attrs"
+              v-on="on"
+            >
+              ...
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-list-item-title @click="editElement(itemParam)">Редактировать</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title @click="deleteMenu(itemParam.id)">Удалить</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
-    </transition>
+    </template>
   </div>
+
+  <!--  <div class="menu">
+      <button
+        v-click-outside="hide"
+        class="btn"
+        @click="toggle"
+      >
+        ...
+      </button>
+      <transition name="fade">
+        <div
+          v-show="opened"
+          class="content"
+        >
+          <button @click="editElement(itemParam)">
+            Редактировать
+          </button>
+          <button @click="deleteMenu(itemParam.id)">
+            Удалить
+          </button>
+        </div>
+      </transition>
+    </div>-->
 </template>
 
 <script>
@@ -41,6 +70,10 @@ export default {
   },
   data () {
     return {
+      items: [
+        {title: 'Редактировать'},
+        {title: 'Удалить'}
+      ],
       opened: false
     }
   },

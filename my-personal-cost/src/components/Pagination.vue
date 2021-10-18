@@ -1,21 +1,38 @@
 <template>
   <div>
-    <v-col>
-      <v-btn color="teal mx-4" dark
-             v-for="page in this.countPages"
-             :key="page"
-             @click="clickPage(page)">
-        {{ page }}
-      </v-btn>
-    </v-col>
+    <template>
+      <div class="text-center">
+        <v-pagination
+          v-model="p"
+          :length="this.countPages"
+          :total-visible="7"
+          @input="clickPage">
+        </v-pagination>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: 'Pagination',
   props: {
     countPages: Number
+  },
+  data () {
+    return {
+      p: this.getPage
+    }
+  },
+  computed: {
+    ...mapGetters(['getCurrentPage']),
+    getPage () {
+      let p = this.getCurrentPage.slice(-1);
+      return parseInt(p)
+    },
+
   },
   methods: {
     clickPage (n) {
@@ -24,7 +41,11 @@ export default {
         this.$emit('changePage')
       }
     }
+  },
+  created () {
+    this.p = this.getPage
   }
+
 }
 </script>
 

@@ -11,10 +11,27 @@ export default new Vuex.Store({
     categoryList: [],
     pagePaymentsList: [],
     countPages: getAllPage.length,
-    currentPage: 'Page1'
+    currentPage: 'Page1',
+    statistics: {}
   },
   getters: {
     getCategoriesList: state => state.categoryList,
+    getStatistics: state => {
+      const data = Object.values(state.pagePaymentsList);
+      let matcher = state.categoryList
+      let fullDesiredCategory = [];
+      for (let i = 0; i < data.length; i++) {
+        let desiredCategory = data[i].filter((obj) => {
+          return obj.category === matcher[0];
+        });
+        fullDesiredCategory = [...fullDesiredCategory, ...desiredCategory]
+      }
+      let resultAmountDesiredCategory = fullDesiredCategory.reduce((prev, next) => prev + next.amount, 0);
+      let resObj = {};
+      resObj[matcher[0]] = resultAmountDesiredCategory;
+      console.log('res:', resObj);
+      return resObj
+    },
     getFullPaymentAmount: state => {
       const all = Object.values(state.pagePaymentsList)
       return all.reduce((res, cur) => {

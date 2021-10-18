@@ -2,48 +2,22 @@
   <div>
     <template>
       <span>Total Prise: {{ this.getFullPaymentAmount }}</span>
-      <v-simple-table
-        fixed-header>
-        <template v-slot:default>
-          <thead>
-          <tr>
-            <th class="text-left">
-              #
-            </th>
-            <th class="text-left">
-              Date
-            </th>
-            <th class="text-left">
-              Category
-            </th>
-            <th class="text-left">
-              Value
-            </th>
-            <th class="text-left">
-
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="item in getPagePaymentsList[currentPage]" :key="item.id">
-            <td>{{ item.id }}</td>
-            <td>{{ item.date }}</td>
-            <td>{{ item.category }}</td>
-            <td>{{ item.amount }}</td>
-            <td>
-              <ContextMenuComponent
-                :item-param="{id: item.id, date: item.date, category: item.category, amount: item.amount}"/>
-            </td>
-          </tr>
-          </tbody>
+      <v-data-table
+        :headers="headers"
+        :items="getPagePaymentsList[currentPage]"
+        class="elevation-1"
+        hide-default-footer
+      >
+        <template v-slot:item.actions="{ item }">
+          <ContextMenuComponent
+            :item-param="{id: item.id, date: item.date, category: item.category, amount: item.amount}"/>
         </template>
-      </v-simple-table>
+      </v-data-table>
+      <pagination
+        :count-pages="this.getCountPages"
+        @changePage="getDataPage"
+      />
     </template>
-    <pagination
-      :count-pages="this.getCountPages"
-      @changePage="getDataPage"
-    />
-
   </div>
 </template>
 
@@ -60,12 +34,24 @@ export default {
   },
   data () {
     return {
-      currentPage: ''
+      headers: [
+        {
+          text: '#',
+          align: 'start',
+          sortable: true,
+          value: 'id',
+        },
+        {text: 'Date', value: 'date', sortable: true},
+        {text: 'Category', value: 'category', sortable: true},
+        {text: 'amount', value: 'amount', sortable: true},
+        {text: 'Actions', value: 'actions', sortable: false},
+      ],
+      currentPage: '',
+
     }
   },
   computed: {
-    ...mapGetters(['getFullPaymentAmount', 'getPagePaymentsList', 'getCountPages'])
-
+    ...mapGetters(['getFullPaymentAmount', 'getPagePaymentsList', 'getCountPages']),
   },
   methods: {
     ...mapActions(['fetchDataPage']),

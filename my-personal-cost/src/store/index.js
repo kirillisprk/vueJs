@@ -20,15 +20,18 @@ export default new Vuex.Store({
       const data = Object.values(state.pagePaymentsList);
       let matcher = state.categoryList
       let fullDesiredCategory = [];
-      for (let i = 0; i < data.length; i++) {
-        let desiredCategory = data[i].filter((obj) => {
-          return obj.category === matcher[0];
-        });
-        fullDesiredCategory = [...fullDesiredCategory, ...desiredCategory]
-      }
-      let resultAmountDesiredCategory = fullDesiredCategory.reduce((prev, next) => prev + next.amount, 0);
       let resObj = {};
-      resObj[matcher[0]] = resultAmountDesiredCategory;
+      debugger
+      for (let j = 0; j < matcher.length; j++) {
+        for (let i = 0; i < data.length; i++) {
+          let desiredCategory = data[i].filter((obj) => {
+            return obj.category === matcher[j];
+          });
+          fullDesiredCategory = [...fullDesiredCategory, ...desiredCategory]
+        }
+        let resultAmountDesiredCategory = fullDesiredCategory.reduce((prev, next) => prev + next.amount, 0);
+        resObj[matcher[j]] = resultAmountDesiredCategory;
+      }
       console.log('res:', resObj);
       return resObj
     },

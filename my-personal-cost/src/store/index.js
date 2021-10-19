@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { allData } from '@/dataFile'
+import {allData, getObjStatistics} from '@/dataFile'
 
 const getAllPage = Object.keys(allData)
 const { Page1, Page2, Page3 } = allData
@@ -11,29 +11,14 @@ export default new Vuex.Store({
     categoryList: [],
     pagePaymentsList: [],
     countPages: getAllPage.length,
-    currentPage: 'Page1',
-    statistics: {}
+    currentPage: 'Page1'
   },
   getters: {
     getCategoriesList: state => state.categoryList,
     getStatistics: state => {
-      const data = Object.values(state.pagePaymentsList);
-      let matcher = state.categoryList
-      let fullDesiredCategory = [];
-      let resObj = {};
-      debugger
-      for (let j = 0; j < matcher.length; j++) {
-        for (let i = 0; i < data.length; i++) {
-          let desiredCategory = data[i].filter((obj) => {
-            return obj.category === matcher[j];
-          });
-          fullDesiredCategory = [...fullDesiredCategory, ...desiredCategory]
-        }
-        let resultAmountDesiredCategory = fullDesiredCategory.reduce((prev, next) => prev + next.amount, 0);
-        resObj[matcher[j]] = resultAmountDesiredCategory;
+      if (Object.keys(state.pagePaymentsList).length > 0) {
+        return getObjStatistics(Object.values(state.pagePaymentsList))
       }
-      console.log('res:', resObj);
-      return resObj
     },
     getFullPaymentAmount: state => {
       const all = Object.values(state.pagePaymentsList)

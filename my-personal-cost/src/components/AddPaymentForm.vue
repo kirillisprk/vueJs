@@ -124,7 +124,8 @@ export default {
     ...mapGetters([
       'getCategoriesList',
       'getCurrentPage'
-    ])
+    ]),
+
 
   },
   methods: {

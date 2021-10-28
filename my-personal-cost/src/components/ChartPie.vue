@@ -1,41 +1,18 @@
 <script>
-import {Pie} from 'vue-chartjs'
+import {Doughnut, mixins} from 'vue-chartjs'
 
+const {reactiveProp} = mixins
 export default {
-  extends: Pie,
-  props: {
-    chartdata: {
-      type: Object,
-      default: null
-    },
-  },
+  mixins: [reactiveProp],
+  extends: Doughnut,
+  props: ['options'],
   data () {
     return {
-      chartOptions: null,
-      chartData: {
-        labels: this.chartdata.labels,
-        datasets: [{
-          label: 'Расходы по категориям',
-          data: this.chartdata.data,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)'
-          ],
-          borderWidth: 1
-        }]
-      }
+      chartOptions: null
     }
   },
   mounted () {
-    this.renderChart(this.chartData, this.chartOptions)
+    this.renderChart(this.chartData, this.options)
   }
 }
 </script>

@@ -21,8 +21,7 @@
             <FastAddList @showAdd="showWindow"/>
           </v-col>
           <v-col>
-            {{ this.getStatistics }}
-            <chart-pie :chartdata="chartData"/>
+            <chart-pie v-if="showChart" :chart-data="datacollection"/>
           </v-col>
         </v-row>
       </v-container>
@@ -50,7 +49,8 @@ export default {
     ChartPie
   },
   data: () => ({
-    loaded: false,
+    datacollection: null,
+    showChart: false,
     dialog: false,
     textHeader: 'My personal const',
     showFormAdd: false,
@@ -58,14 +58,7 @@ export default {
     modalSettings: {},
     editIsShow: false,
     editElement: {},
-    state: '',
-    //chartLabels: Object.keys(this.getStatistics),
-    //chartData: Object.values(this.getStatistics),
-    chartOptions: null,
-    chartData: {
-      labels: ['Food'],
-      data: [333]
-    }
+    state: ''
   }),
   methods: {
     edit (element) {
@@ -82,9 +75,6 @@ export default {
     showWindow () {
       this.dialog = true
       this.state = 'Add'
-    },
-    showGraphic () {
-      this.renderChart(this.dataSet)
     }
   },
   computed: {
@@ -92,14 +82,32 @@ export default {
       'getCategoriesList',
       'getStatistics'
     ]),
-    getLabels () {
-      console.log('345', this.getStatistics)
-      return ['Food']
+    getLabel: function () {
+      if (this.getStatistics) {
+        this.showChart = true
+        return Object.keys(this.getStatistics)
+      } else return ['']
+    },
+    getData: function () {
+      if (this.getStatistics) {
+        return Object.values(this.getStatistics)
+      } else return ['']
     }
   },
   watch: {
     $route (to) {
       this.showFormAdd = to.name === 'addPayment';
+    },
+    getData () {
+      this.datacollection = {
+        labels: this.getLabel,
+        datasets: [
+          {
+            backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#ff0202"],
+            data: this.getData
+          }
+        ]
+      }
     }
   },
   created () {

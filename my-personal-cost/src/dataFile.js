@@ -4,19 +4,19 @@ const allData = {
       id: 1,
       date: '28.03.2020',
       category: 'Food',
-      amount: 169
+      amount: 100
     },
     {
       id: 2,
       date: '24.03.2020',
       category: 'Transport',
-      amount: 360
+      amount: 10
     },
     {
       id: 3,
       date: '24.03.2020',
       category: 'Food',
-      amount: 532
+      amount: 20
     }
   ],
   Page2: [
@@ -50,14 +50,28 @@ const allData = {
       id: 8,
       date: '24.03.2020',
       category: 'Transport',
-      amount: 324
+      amount: 120
     },
     {
       id: 9,
       date: '24.03.2020',
       category: 'Food',
-      amount: 433
+      amount: 300
     }
   ]
 }
-export { allData }
+
+let getObjStatistics = (data) => {
+  let statistic = {};
+  for (const items of data) {
+    for (const item of items) {
+      if (statistic.hasOwnProperty(item.category)) {
+        statistic[item.category] += item.amount
+      } else {
+        statistic[item.category] = item.amount
+      }
+    }
+  }
+  return statistic
+}
+export {allData, getObjStatistics}

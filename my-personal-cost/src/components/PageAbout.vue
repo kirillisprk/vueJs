@@ -1,7 +1,6 @@
 <template>
   <div>
     PageAbout
-    <button @click="openModal">testMODAL</button>
   </div>
 </template>
 
@@ -9,9 +8,6 @@
 export default {
   name: "PageAbout",
   methods: {
-    openModal () {
-      this.$modal.show({title: "Modal", content: "Modal"})
-    }
   }
 }
 </script>

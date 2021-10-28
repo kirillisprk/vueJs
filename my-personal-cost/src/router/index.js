@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import PaymentsDisplay from "@/components/PaymentsDisplay";
 import PageAbout from "@/components/PageAbout";
 import Page404 from "@/components/Page404";
+import Calculator from "@/components/Calculator";
 
 Vue.use(Router)
 export default new Router({
@@ -25,6 +26,11 @@ export default new Router({
     {
       path: '/add/payment/:category',
       name: 'addPayment'
+    },
+    {
+      path: '/calculator',
+      name: 'calculator',
+      component: Calculator
     },
 
     {

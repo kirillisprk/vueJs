@@ -1,12 +1,18 @@
 <template>
   <div>
     PageAbout
+    <button @click="openModal">testMODAL</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: "PageAbout"
+  name: "PageAbout",
+  methods: {
+    openModal () {
+      this.$modal.show({title: "Modal", content: "Modal"})
+    }
+  }
 }
 </script>
 

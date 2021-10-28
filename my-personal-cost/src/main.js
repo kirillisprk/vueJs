@@ -3,9 +3,10 @@ import App from './App.vue'
 // импортируем экземпляр созданного хранилища из листинга выше
 import store from './store'
 import router from './router'
+import contextMenu from './plugins/ContextMenu'
 
 Vue.config.productionTip = false
-
+Vue.use(contextMenu)
 new Vue({
   render: h => h(App),
   store,

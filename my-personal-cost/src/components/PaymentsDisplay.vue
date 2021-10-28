@@ -7,6 +7,7 @@
         <th>Date</th>
         <th>Category</th>
         <th>Amount</th>
+        <th></th>
       </tr>
       </thead>
       <tfoot>
@@ -17,6 +18,10 @@
         <td>{{ item.date }}</td>
         <td>{{ item.category }}</td>
         <td>{{ item.amount }}</td>
+        <td>
+          <ContextMenuComponent
+            :itemParam="{id: item.id, date: item.date, category: item.category, amount: item.amount}"/>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -29,11 +34,13 @@
 <script>
 import {mapActions, mapGetters, mapMutations} from 'vuex'
 import Pagination from "@/components/Pagination";
+import ContextMenuComponent from "@/components/ContextMenuComponent";
 
 export default {
   name: 'PaymentsDisplay',
   components: {
-    Pagination
+    Pagination,
+    ContextMenuComponent
   },
   data () {
     return {
@@ -46,7 +53,7 @@ export default {
   },
   methods: {
     ...mapActions(['fetchDataPage']),
-    ...mapMutations(['setCurrentPage']),
+    ...mapMutations(['setCurrentPage', 'deleteCurrentElement']),
 
     getDataPage () {
       let p = `Page${this.$route.params.page}`;
@@ -59,6 +66,9 @@ export default {
         this.cashPage = this.getPagePaymentsList
       }
     },
+    deleteCurrent (id) {
+      this.deleteCurrentElement(id)
+    }
   },
 
   mounted () {
@@ -66,6 +76,7 @@ export default {
   },
   created () {
     this.currentPage = `Page${this.$route.params.page}`;
+    this.$contextMenu.EventBus.$on('deleteMenu', this.deleteCurrent)
   }
 
 }

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3 v-if="state==='edit'">Форма редактирования</h3>
     <form class="add-form" id="add-item" @submit="checkForm">
       <select v-model="selectedCategory" :class="{ error: isErrorCategory}">
         <option disabled value="">Выберите категорию</option>
@@ -10,7 +11,11 @@
       <input :class="{ error: isErrorAmount}" placeholder="Payment amount" v-model.number="amount" type="number"
              min="0"/>
       <input ref="date" placeholder="Payment Date" v-model="date" type="date"/>
-      <button class="buttonSave" type="submit">Add +</button>
+      <div class="footer">
+        <button v-if="state==='edit'" @click="close()">Close</button>
+        <button class="buttonSave" type="submit">{{ state }}</button>
+      </div>
+
     </form>
   </div>
 </template>
@@ -19,11 +24,19 @@
 import {mapActions, mapMutations, mapGetters} from 'vuex'
 export default {
   name: 'AddPaymentForm',
+  props: {
+    state: {
+      type: String,
+      default: 'Add +'
+    },
+    editElement: Object
+  },
   data () {
     return {
       category: '',
       amount: '',
       date: '',
+      editId: '',
       isErrorAmount: false,
       isErrorCategory: false,
       options: '',
@@ -39,11 +52,15 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'addDataToPaymentsList'
+      'addDataToPaymentsList',
+      'editCurrentElement'
     ]),
     ...mapActions([
       'fetchCategory'
     ]),
+    close () {
+      this.$contextMenu.closeEditForm()
+    },
     getOptionsCategories () {
       this.options = this.getCategoriesList
     },
@@ -79,11 +96,20 @@ export default {
       });
 
     },
+    onEditClick () {
+      const data = {
+        category: this.selectedCategory,
+        amount: this.amount,
+        date: this.createDate(this.date),
+        id: this.editId
+      }
+      this.editCurrentElement(data)
+    },
     checkForm (e) {
       this.isErrorAmount = false;
       this.isErrorCategory = false;
       if (this.amount && this.selectedCategory) {
-        this.onSaveClick();
+        (this.state === 'edit') ? this.onEditClick() : this.onSaveClick()
       }
       if (!this.amount) {
         this.isErrorAmount = true
@@ -95,7 +121,16 @@ export default {
     },
     getCategories () {
       this.fetchCategory()
-    }
+    },
+    setForm (element) {
+      this.selectedCategory = element.category;
+      this.amount = element.amount;
+      this.editId = element.id
+      const [dd, mm, yyyy] = element.date.split('.')
+      this.date = new Date(+yyyy, +mm, +dd).toISOString().slice(0, 10);
+
+    },
+
   },
   watch: {
     $route (to) {
@@ -111,7 +146,11 @@ export default {
       this.getCategories()
     }
     this.getOptionsCategories()
-  }
+    if (this.state === 'edit') {
+      this.setForm(this.editElement)
+      this.$contextMenu.EventBus.$on('editElement', this.setForm)
+    }
+  },
 
 }
 
@@ -122,6 +161,12 @@ export default {
   display: grid;
   max-width: 50%;
   grid-gap: 10px;
+}
+
+.footer {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
 }
 
 .error {

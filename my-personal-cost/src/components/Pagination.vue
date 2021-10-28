@@ -14,7 +14,11 @@ export default {
   },
   methods: {
     clickPage (n) {
-      this.$emit('changePage', n)
+      if (this.$route.path !== `/dashboard/${n}`) {
+        this.$router.push({path: `/dashboard/${n}`})
+        this.$emit('changePage')
+      }
+      // console.log(this.$route.params.page)
     }
   }
 }

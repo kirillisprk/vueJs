@@ -1,33 +1,51 @@
 <template>
   <div id="app">
     <Header :text-header="textHeader"/>
+    <FastAddList/>
     <ButtonAddNewCost @emitShowForm="showFormAdd = !showFormAdd"/>
     <AddPaymentForm v-show="showFormAdd"/>
-    <PaymentsDisplay/>
+    <header>
+      <router-link to="/dashboard/1">Dashboard</router-link>
+      <router-link to="/about">About</router-link>
+    </header>
+    <router-view/>
   </div>
+
 </template>
 
 <script>
 import Header from './components/Header.vue'
 import ButtonAddNewCost from './components/ButtonAddNewCost'
 import AddPaymentForm from './components/AddPaymentForm';
-import PaymentsDisplay from './components/PaymentsDisplay'
+import FastAddList from "@/components/FastAddList";
 
 export default {
   name: 'App',
   components: {
     Header,
     ButtonAddNewCost,
+    FastAddList,
     AddPaymentForm,
-    PaymentsDisplay
   },
   data () {
     return {
       textHeader: 'My personal const',
       showFormAdd: false,
+      page: 'about'
     }
   },
-  methods: {},
+  methods: {
+  },
+  watch: {
+    $route (to) {
+      this.showFormAdd = to.name === 'addPayment';
+    }
+  },
+  created () {
+    if (this.$route.path === '/') {
+      this.$router.push({name: 'dashboard', params: {page: '1'}})
+    }
+  }
 
 }
 </script>
@@ -47,5 +65,10 @@ body {
   max-width: 960px;
   padding-right: 10px;
   padding-left: 10px;
+}
+
+header {
+  display: grid;
+  grid-auto-flow: column;
 }
 </style>

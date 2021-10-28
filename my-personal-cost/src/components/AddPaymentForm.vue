@@ -32,7 +32,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getCategoriesList'
+      'getCategoriesList',
+      'getCurrentPage'
     ]),
 
   },
@@ -71,6 +72,11 @@ export default {
         date: this.createDate(this.date)
       }
       this.addDataToPaymentsList(data)
+      this.$router.push({name: 'dashboard', params: {page: this.getCurrentPage.slice(-1)}}).catch(err => {
+        if (err.name !== 'NavigationDuplicated') {
+          throw err;
+        }
+      });
 
     },
     checkForm (e) {
@@ -89,7 +95,16 @@ export default {
     },
     getCategories () {
       this.fetchCategory()
-    },
+    }
+  },
+  watch: {
+    $route (to) {
+      if (to.name === 'addPayment') {
+        this.selectedCategory = to.params.category
+        this.amount = parseInt(to.query.value)
+        this.date = new Date().toISOString().slice(0, 10)
+      }
+    }
   },
   mounted () {
     if (!this.getCategoriesList.length) {
@@ -99,6 +114,7 @@ export default {
   }
 
 }
+
 </script>
 
 <style lang="scss" scoped>

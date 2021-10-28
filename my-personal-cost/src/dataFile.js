@@ -1,5 +1,5 @@
-let allData = {
-  "Page1": [
+const allData = {
+  Page1: [
     {
       id: 1,
       date: '28.03.2020',
@@ -19,7 +19,7 @@ let allData = {
       amount: 532
     }
   ],
-  "Page2": [
+  Page2: [
     {
       id: 4,
       date: '28.03.2020',
@@ -39,7 +39,7 @@ let allData = {
       amount: 433
     }
   ],
-  "Page3": [
+  Page3: [
     {
       id: 7,
       date: '28.03.2020',
@@ -58,6 +58,6 @@ let allData = {
       category: 'Food',
       amount: 433
     }
-  ],
+  ]
 }
-export {allData}
+export { allData }

@@ -1,20 +1,65 @@
 <template>
-  <div class="menu">
-    <button class="btn" v-click-outside="hide" @click="toggle">...</button>
-    <transition name="fade">
-      <div v-show="opened" class="content">
-        <button @click="editElement(itemParam)">Редактировать</button>
-        <button @click="deleteMenu(itemParam.id)">Удалить</button>
+  <div>
+    <template>
+      <div class="text-center">
+        <v-menu
+          offset-y
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              text
+              color="teal"
+              v-bind="attrs"
+              v-on="on"
+            >
+              ...
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-list-item-title @click="editElement(itemParam)">Редактировать</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title @click="deleteMenu(itemParam.id)">Удалить</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
-    </transition>
+    </template>
   </div>
+
+  <!--  <div class="menu">
+      <button
+        v-click-outside="hide"
+        class="btn"
+        @click="toggle"
+      >
+        ...
+      </button>
+      <transition name="fade">
+        <div
+          v-show="opened"
+          class="content"
+        >
+          <button @click="editElement(itemParam)">
+            Редактировать
+          </button>
+          <button @click="deleteMenu(itemParam.id)">
+            Удалить
+          </button>
+        </div>
+      </transition>
+    </div>-->
 </template>
 
 <script>
 import ClickOutside from 'vue-click-outside'
 
 export default {
-  name: "ContextMenuComponent",
+  name: 'ContextMenuComponent',
+  directives: {
+    ClickOutside
+  },
   props: {
     itemParam: {
       id: Number,
@@ -25,8 +70,15 @@ export default {
   },
   data () {
     return {
-      opened: false,
+      items: [
+        {title: 'Редактировать'},
+        {title: 'Удалить'}
+      ],
+      opened: false
     }
+  },
+  mounted () {
+    // this.popupItem = this.$el
   },
   methods: {
     toggle () {
@@ -42,12 +94,6 @@ export default {
     editElement (element) {
       this.$contextMenu.edit(element)
     }
-  },
-  mounted () {
-    //this.popupItem = this.$el
-  },
-  directives: {
-    ClickOutside
   }
 }
 </script>

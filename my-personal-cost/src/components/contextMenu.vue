@@ -1,10 +1,8 @@
-<template>
-
-</template>
+<template />
 
 <script>
 export default {
-  name: "contextMenu"
+  name: 'ContextMenu'
 }
 </script>
 

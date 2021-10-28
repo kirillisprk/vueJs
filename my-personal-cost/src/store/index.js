@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {allData} from "@/dataFile";
+import { allData } from '@/dataFile'
 
-const getAllPage = Object.keys(allData);
-let {Page1, Page2, Page3} = allData;
+const getAllPage = Object.keys(allData)
+const { Page1, Page2, Page3 } = allData
 
 Vue.use(Vuex)
 export default new Vuex.Store({
@@ -11,12 +11,29 @@ export default new Vuex.Store({
     categoryList: [],
     pagePaymentsList: [],
     countPages: getAllPage.length,
-    currentPage: 'Page1'
+    currentPage: 'Page1',
+    statistics: {}
   },
   getters: {
     getCategoriesList: state => state.categoryList,
+    getStatistics: state => {
+      const data = Object.values(state.pagePaymentsList);
+      let matcher = state.categoryList
+      let fullDesiredCategory = [];
+      for (let i = 0; i < data.length; i++) {
+        let desiredCategory = data[i].filter((obj) => {
+          return obj.category === matcher[0];
+        });
+        fullDesiredCategory = [...fullDesiredCategory, ...desiredCategory]
+      }
+      let resultAmountDesiredCategory = fullDesiredCategory.reduce((prev, next) => prev + next.amount, 0);
+      let resObj = {};
+      resObj[matcher[0]] = resultAmountDesiredCategory;
+      console.log('res:', resObj);
+      return resObj
+    },
     getFullPaymentAmount: state => {
-      let all = Object.values(state.pagePaymentsList);
+      const all = Object.values(state.pagePaymentsList)
       return all.reduce((res, cur) => {
         let sum = 0
         for (let i = 0; i < cur.length; i++) {
@@ -39,14 +56,14 @@ export default new Vuex.Store({
       state.categoryList.push(...payload)
     },
     setPagePaymentsList (state, payload) {
-      let currentPage = Object.keys(payload).toString();
-      let cashPage = Object.keys(state.pagePaymentsList);
+      const currentPage = Object.keys(payload).toString()
+      const cashPage = Object.keys(state.pagePaymentsList)
       if (!cashPage.includes(currentPage)) {
         state.pagePaymentsList = Object.assign(payload, state.pagePaymentsList)
       }
     },
     addDataToPaymentsList (state, payload) {
-      let pageData = state.pagePaymentsList[state.currentPage];
+      let pageData = state.pagePaymentsList[state.currentPage]
       payload.id = new Date().getTime()
       pageData = pageData.push(payload)
     },
@@ -54,21 +71,21 @@ export default new Vuex.Store({
       state.currentPage = payload
     },
     deleteCurrentElement (state, payload) {
-      let localData = state.pagePaymentsList[state.currentPage]
-      let indexElement = localData.findIndex(entry => entry.id === payload);
+      const localData = state.pagePaymentsList[state.currentPage]
+      const indexElement = localData.findIndex(entry => entry.id === payload)
       state.pagePaymentsList[state.currentPage] = localData.filter((element, index) => index !== indexElement)
     },
     editCurrentElement (state, payload) {
-      let localData = state.pagePaymentsList[state.currentPage]
-      let indexElement = localData.findIndex(entry => entry.id === payload.id);
-      localData[indexElement].id = payload.id;
-      localData[indexElement].amount = payload.amount;
-      localData[indexElement].category = payload.category;
-      localData[indexElement].date = payload.date;
+      const localData = state.pagePaymentsList[state.currentPage]
+      const indexElement = localData.findIndex(entry => entry.id === payload.id)
+      localData[indexElement].id = payload.id
+      localData[indexElement].amount = payload.amount
+      localData[indexElement].category = payload.category
+      localData[indexElement].date = payload.date
     }
   },
   actions: {
-    fetchCategory ({commit}) {
+    fetchCategory ({ commit }) {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve([
@@ -83,14 +100,14 @@ export default new Vuex.Store({
           commit('setCategories', res)
         })
     },
-    fetchDataPage ({commit}, numberPage) {
+    fetchDataPage ({ commit }, numberPage) {
       return new Promise((resolve) => {
         switch (numberPage) {
           case 'Page1':
             setTimeout(() => {
               resolve(
                 {
-                  Page1,
+                  Page1
                 }
               )
             }, 1000)
@@ -99,7 +116,7 @@ export default new Vuex.Store({
             setTimeout(() => {
               resolve(
                 {
-                  Page2,
+                  Page2
                 }
               )
             }, 1000)
@@ -108,7 +125,7 @@ export default new Vuex.Store({
             setTimeout(() => {
               resolve(
                 {
-                  Page3,
+                  Page3
                 }
               )
             }, 1000)
@@ -117,6 +134,6 @@ export default new Vuex.Store({
       }).then(res => {
         commit('setPagePaymentsList', res)
       })
-    },
+    }
   }
 })

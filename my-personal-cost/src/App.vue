@@ -1,25 +1,44 @@
 <template>
-  <div id="app">
-    <Header :text-header="textHeader"/>
-    <FastAddList/>
-    <ButtonAddNewCost @emitShowForm="showFormAdd = !showFormAdd"/>
-    <AddPaymentForm v-show="showFormAdd"/>
-    <AddPaymentForm v-if="editIsShow" :state="this.state" :editElement="editElement"/>
-    <header>
-      <router-link to="/dashboard/1">Dashboard</router-link>
-      <router-link to="/Calculator">Calculator</router-link>
-      <router-link to="/about">About</router-link>
-    </header>
-    <router-view/>
-  </div>
+  <v-app>
+    <v-app-bar app flat color="teal" dark>
+      <v-btn plain :ripple="false" to="/dashboard/1">Dashboard</v-btn>
+      <v-btn plain :ripple="false" to="/Calculator">Calculator</v-btn>
+      <v-btn plain :ripple="false" to="/about">About</v-btn>
+    </v-app-bar>
+    <v-main>
+      <v-container>
+        <v-row>
+          <Header :text-header="textHeader"/>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-btn color="teal mb-8" dark @click="state='Add'; dialog = true">
+              ADD NEW COST
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <AddPaymentForm @hideAdd="closeWindow" :dialog="dialog" :state="this.state" :editElement="editElement"/>
+            <router-view/>
+            <FastAddList @showAdd="showWindow"/>
+          </v-col>
+          <v-col>
+            {{ this.getStatistics }}
+            <chart-pie :chartdata="chartData"/>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
 
+  </v-app>
 </template>
 
 <script>
-import Header from './components/Header.vue'
-import ButtonAddNewCost from './components/ButtonAddNewCost'
-import AddPaymentForm from './components/AddPaymentForm';
+
+import Header from "@/components/Header";
+import ButtonAddNewCost from "@/components/ButtonAddNewCost";
 import FastAddList from "@/components/FastAddList";
+import AddPaymentForm from "@/components/AddPaymentForm";
+import {mapGetters} from "vuex";
+import ChartPie from "@/components/ChartPie";
 
 export default {
   name: 'App',
@@ -28,26 +47,54 @@ export default {
     ButtonAddNewCost,
     FastAddList,
     AddPaymentForm,
+    ChartPie
   },
-  data () {
-    return {
-      textHeader: 'My personal const',
-      showFormAdd: false,
-      page: 'about',
-      modalSettings: {},
-      editIsShow: false,
-      editElement: {},
-      state: ''
+  data: () => ({
+    loaded: false,
+    dialog: false,
+    textHeader: 'My personal const',
+    showFormAdd: false,
+    page: 'about',
+    modalSettings: {},
+    editIsShow: false,
+    editElement: {},
+    state: '',
+    //chartLabels: Object.keys(this.getStatistics),
+    //chartData: Object.values(this.getStatistics),
+    chartOptions: null,
+    chartData: {
+      labels: ['Food'],
+      data: [333]
     }
-  },
+  }),
   methods: {
     edit (element) {
-      this.editIsShow = true;
+      this.dialog = true;
       this.state = 'edit'
       this.editElement = element
     },
     closeEdit () {
       this.editIsShow = false
+    },
+    closeWindow () {
+      this.dialog = false
+    },
+    showWindow () {
+      this.dialog = true
+      this.state = 'Add'
+    },
+    showGraphic () {
+      this.renderChart(this.dataSet)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getCategoriesList',
+      'getStatistics'
+    ]),
+    getLabels () {
+      console.log('345', this.getStatistics)
+      return ['Food']
     }
   },
   watch: {
@@ -66,25 +113,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: grid;
-  grid-gap: 10px;
-}
-body {
-  margin-right: auto;
-  margin-left: auto;
-  max-width: 960px;
-  padding-right: 10px;
-  padding-left: 10px;
-}
-header {
-  display: grid;
-  grid-auto-flow: column;
-  justify-items: start;
-}
-</style>

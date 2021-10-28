@@ -12,7 +12,7 @@
       <tfoot>
       </tfoot>
       <tbody>
-      <tr v-for="item in items" v-bind:key="item.id">
+      <tr v-for="item in getPagePaymentsList[currentPage]" v-bind:key="item.id">
         <td>{{ item.id }}</td>
         <td>{{ item.date }}</td>
         <td>{{ item.category }}</td>
@@ -20,20 +20,50 @@
       </tr>
       </tbody>
     </table>
+    <span>Total Prise: {{ this.getFullPaymentAmount }}</span>
+    <br/>
+    <pagination :count-pages="this.getCountPages" @changePage="getDataPage"/>
   </div>
 </template>
 
 <script>
+import {mapActions, mapGetters, mapMutations} from 'vuex'
+import Pagination from "@/components/Pagination";
+
 export default {
   name: 'PaymentsDisplay',
-  props: {
-    items: {
-      type: Array
-    }
+  components: {
+    Pagination
   },
   data () {
-    return {}
-  }
+    return {
+      currentPage: ''
+    }
+  },
+  computed: {
+    ...mapGetters(['getFullPaymentAmount', 'getPagePaymentsList', 'getCountPages']),
+
+  },
+  methods: {
+    ...mapActions(['fetchDataPage']),
+    ...mapMutations(['setCurrentPage']),
+
+    getDataPage (n) {
+      let p = `Page${n}`;
+      this.setCurrentPage(p);
+      this.currentPage = p;
+      let cashPage = Object.keys(this.getPagePaymentsList);
+      if (!cashPage.includes(this.currentPage)) {
+        this.fetchDataPage(p)
+        this.cashPage = this.getPagePaymentsList
+      }
+    },
+  },
+
+  mounted () {
+    this.getDataPage(1)
+  },
+
 }
 </script>
 
